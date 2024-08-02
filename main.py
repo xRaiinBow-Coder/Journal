@@ -16,7 +16,7 @@ class Page:
         self.leftFrame = tk.Frame(self.root, width=200, height=300, bg="lightgray")
         self.leftFrame.grid(columnspan=2, row=0, sticky="ns") 
 
-        tk.Button(self.leftFrame, text="New Entry", command="").grid(column=0,row=0, padx=5, pady=5, sticky="ew")
+        tk.Button(self.leftFrame, text="New Entry", command=self.NewEntry).grid(column=0,row=0, padx=5, pady=5, sticky="ew")
         tk.Button(self.leftFrame, text="View All", command="").grid(column=0,row=1, padx=5, pady=5, sticky="ew")
         tk.Button(self.leftFrame, text="Delete", command=self.Delete).grid(column=0,row=2, padx=5, pady=5, sticky="ew")
 
@@ -55,10 +55,53 @@ class Page:
         self.conn.commit()
 
 
-    def NewEntry():
-        pass
+    def NewEntry(self):
+        #self.root.destroy()
+        self.new = tk.Tk()
+        self.new.config(bg="lightblue")
+        self.new.title("Entry's")
+        self.new.geometry("300x300")
+        self.new.resizable(False, False)
+        
+
+        
+        tk.Label(self.new, text="Name", bg="Lightblue").grid(column=0, row=0, padx=2, pady=2, sticky="w")
+        self.ent1 = tk.Entry(self.new, width=30)
+        self.ent1.grid(column=1, row=0,padx=2, pady=2, sticky="ew")
+        
+        tk.Label(self.new, text="Entry", bg="Lightblue").grid(column=0, row=2, padx=2, pady=2, sticky="w")
+        self.ent2 = tk.Text(self.new, width=30, height=8)
+        self.ent2.grid(column=1, row=2,padx=2, pady=2, sticky="ew")
+
+        
+        tk.Label(self.new, text="Rating", bg="Lightblue").grid(column=0, row=4, padx=2, pady=2, sticky="w")
+        self.ent3 = tk.Text(self.new, width=30, height=4)
+        self.ent3.grid(column=1, row=4,padx=2, pady=2, sticky="ew")
+
+        tk.Button(self.new, text="Submit", bg="white", command=self.New).grid(column=1, row=5, padx=2, pady=5, sticky="ew")
+        tk.Button(self.new, text="Cancel", bg="White", command=self.cancel).grid(column=1, row=6, padx=2, pady=5, sticky="ew")
+        
+
+        self.new.mainloop()
     
-    def ViewAll():
-        pass
+    def cancel(self):
+        self.new.destroy()
+    
+    def New(self):
+        
+        Name = self.ent1.get().strip()
+        Entry = self.ent2.get("1.0", "end-1c").strip()
+        Rating = self.ent3.get("1.0", "end-1c").strip()
+
+        if Name and Entry and Rating:
+            self.cursor.execute("INSERT INTO Journal(Name, Entry, Ratings) VALUES (?, ?, ?)", (Name, Entry, Rating))
+            self.conn.commit()
+            self.treeView.insert("", tk.END, text=Name, values=(Entry, Rating))
+            self.new.destroy()
+        else:
+            print("please fill in all the fields")
+        
+        def ViewAll():
+            pass
     
 Page().MainView()
