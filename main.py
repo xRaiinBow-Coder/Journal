@@ -26,8 +26,8 @@ class Page:
         self.treeView.heading("Entry Field", text="Entry Field")
         self.treeView.heading("Overall Rating", text="Overall Rating")
         
+        self.treeView.tag_configure('separator', background="lightblue")
 
- 
         self.treeView.grid(column=3, row=0, sticky="nsew")
 
         self.conn = sqlite3.connect("Entry")
