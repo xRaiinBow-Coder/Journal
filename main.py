@@ -3,15 +3,6 @@ from tkinter import ttk
 import sqlite3
 import database
 
-conn = sqlite3.connect("Entry")
-conn.execute('''
-    CREATE TABLE IF NOT EXISTS Journal (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        Name TEXT NOT NULL,
-        Entry TEXT NOT NULL,
-        Ratings TEXT NOT NULL     
-    )
-''')
 
 
 class Page:
@@ -25,11 +16,13 @@ class Page:
         self.leftFrame = tk.Frame(self.root, width=200, height=300, bg="lightgray")
         self.leftFrame.grid(columnspan=2, row=0, sticky="ns") 
 
-        # Create a Treeview widget with columns "Name" and "Entry Field"
-        self.treeView = ttk.Treeview(self.root, columns=("Entry Field", "Overall Rating"))
+        tk.Button(self.leftFrame, text="New Entry", command="").grid(column=0,row=0, padx=5, pady=5, sticky="ew")
+        tk.Button(self.leftFrame, text="View All", command="").grid(column=0,row=1, padx=5, pady=5, sticky="ew")
+        tk.Button(self.leftFrame, text="Delete", command=self.Delete).grid(column=0,row=2, padx=5, pady=5, sticky="ew")
+
         
-        # Setup headings
-        self.treeView.heading("#0", text="Name")  # "#0" is the default column for the tree item label
+        self.treeView = ttk.Treeview(self.root, columns=("Entry Field", "Overall Rating"))
+        self.treeView.heading("#0", text="Name")  
         self.treeView.heading("Entry Field", text="Entry Field")
         self.treeView.heading("Overall Rating", text="Overall Rating")
         
@@ -45,13 +38,27 @@ class Page:
         for row in results:
             self.treeView.insert("", tk.END, text=row[1], values=(row[2], row[3]))
         
-        
-    
-
-
-
         self.root.mainloop()
+    
+    def Delete(self):
+        selectedItem = self.treeView.selection()
+
+        
+        item = selectedItem[0]
+
+        bookAuthor = self.treeView.item(item, "text")
+        bookName = self.treeView.item(item, "values")[0]
+        PublishDate = self.treeView.item(item, "values")[1]
+
+        self.treeView.delete(item)
+        self.cursor.execute("DELETE FROM Journal WHERE Name = ? AND Entry = ? And Ratings = ?", (bookAuthor, bookName, PublishDate))
+        self.conn.commit()
 
 
+    def NewEntry():
+        pass
+    
+    def ViewAll():
+        pass
     
 Page().MainView()
