@@ -2,26 +2,14 @@ import tkinter as tk
 from tkinter import ttk
 import sqlite3
 
-
-
-
 class Page:
 
-    def __init__(self):
+
+    def MainView(self):
         self.root = tk.Tk()
         self.root.title("MainPage")
         self.root.resizable(False, False)
 
-    def MainView(self):
-        self.leftFrame = tk.Frame(self.root, width=200, height=300, bg="lightgray")
-        self.leftFrame.grid(columnspan=2, row=0, sticky="ns") 
-
-        tk.Button(self.leftFrame, text="New Entry", command=self.NewEntry).grid(column=0,row=0, padx=5, pady=5, sticky="ew")
-        tk.Button(self.leftFrame, text="View All", command="").grid(column=0,row=1, padx=5, pady=5, sticky="ew")
-        tk.Button(self.leftFrame, text="Delete", command=self.Delete).grid(column=0,row=2, padx=5, pady=5, sticky="ew")
-        #tk.Button(self.leftFrame, text="Refresh", command=self.Refresh).grid(column=0,row=2, padx=5, pady=5, sticky="ew")
-
-        
         self.treeView = ttk.Treeview(self.root, columns=("Entry Field", "Overall Rating"))
         self.treeView.heading("#0", text="Name")  
         self.treeView.heading("Entry Field", text="Entry Field")
@@ -40,14 +28,45 @@ class Page:
         for row in results:
             self.treeView.insert("", tk.END, text=row[1], values=(row[2], row[3]))
         
+
+
+        self.leftFrame = tk.Frame(self.root, width=200, height=300, bg="lightgray")
+        self.leftFrame.grid(columnspan=2, row=0, sticky="ns") 
+
+        tk.Button(self.leftFrame, text="New Entry", command=self.NewEntry).grid(column=0,row=0, padx=5, pady=5, sticky="ew")
+        tk.Button(self.leftFrame, text="View All", command=self.ViewAll).grid(column=0,row=1, padx=5, pady=5, sticky="ew")
+        tk.Button(self.leftFrame, text="Delete", command=self.Delete).grid(column=0,row=2, padx=5, pady=5, sticky="ew")
+        tk.Button(self.leftFrame, text="expand", command=self.Click).grid(column=0,row=3, padx=5, pady=5, sticky="ew")
+        tk.Button(self.leftFrame, text="Refresh", command=self.Refresh).grid(column=0,row=4, padx=5, pady=5, sticky="ew")
+        
         self.cursor.execute("SELECT COUNT (*) FROM Journal")
         self.count = self.cursor.fetchone()
-        tk.Label(self.leftFrame, text=self.count).grid(columnspan=2, row=4, sticky="ew")
+        tk.Label(self.leftFrame, text=self.count).grid(columnspan=2, row=5, sticky="ew")
 
 
         self.root.mainloop()
     
+    def Click(self):
+        selectedItem = self.treeView.selection()
 
+
+        if selectedItem:
+            item = self.treeView.item(selectedItem)
+            itemName = item['text']
+            itemValues = item['values']
+
+            
+            FullEntry = tk.Toplevel(self.root)
+            FullEntry.title("Journal Entry")
+            FullEntry.resizable(False, False)
+
+            tk.Label(FullEntry, text=f"Name: {itemName}").grid(row=0, column=0, padx=5, pady=5)
+            tk.Label(FullEntry, text=f"Entry Field: {itemValues[0]}").grid(row=1, column=0, padx=5, pady=5)
+            tk.Label(FullEntry, text=f"Overall Rating: {itemValues[1]}").grid(row=2, column=0, padx=5, pady=5)
+
+    def Refresh(self):
+        self.root.destroy()
+        self.MainView()
     
 
     def Delete(self):
@@ -93,10 +112,6 @@ class Page:
 
         self.new.mainloop()
 
-    
-    def cancel(self):
-        self.new.destroy()
-    
     def New(self):
         
         Name = self.ent1.get().strip()
@@ -111,7 +126,40 @@ class Page:
         else:
             print("please fill in all the fields")
         
-        def ViewAll():
-            pass
+    def ViewAll(self):
+        self.root.destroy()
+
+        self.view = tk.Tk()
+        self.view.config(bg="Lightgrey")
+        self.view.title("Database Entries")
+        self.view.geometry("200x200")
+
+        self.treeView = ttk.Treeview(self.view, columns=("Entry Field", "Overall Rating"))
+        self.treeView.heading("#0", text="Name")  
+        self.treeView.heading("Entry Field", text="Entry Field")
+        self.treeView.heading("Overall Rating", text="Overall Rating")
+        self.treeView.grid(column=3, row=0, sticky="nsew")
+
+        maxShowing = 25
+        self.treeView.configure(height=maxShowing)
+
+        self.conn = sqlite3.connect("Entry")
+        self.cursor = self.conn.cursor()
+        self.cursor.execute("SELECT * FROM Journal")
+        
+        results = self.cursor.fetchall()
+        
+        for row in results:
+            self.treeView.insert("", tk.END, text=row[1], values=(row[2], row[3]))
+
+        tk.Button(self.view, text="Return", command=self.cancel, bg="Grey").grid(column=0, row=0, sticky="ns")
+
+    def cancel(self):
+        self.view.destroy()
+        self.MainView()
+
+
+
+
     
 Page().MainView()
