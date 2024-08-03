@@ -132,7 +132,7 @@ class Page:
         self.view = tk.Tk()
         self.view.config(bg="Lightgrey")
         self.view.title("Database Entries")
-        self.view.geometry("200x200")
+
 
         self.treeView = ttk.Treeview(self.view, columns=("Entry Field", "Overall Rating"))
         self.treeView.heading("#0", text="Name")  
