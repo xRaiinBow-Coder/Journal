@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 import sqlite3
-import database
+
 
 
 
@@ -19,6 +19,7 @@ class Page:
         tk.Button(self.leftFrame, text="New Entry", command=self.NewEntry).grid(column=0,row=0, padx=5, pady=5, sticky="ew")
         tk.Button(self.leftFrame, text="View All", command="").grid(column=0,row=1, padx=5, pady=5, sticky="ew")
         tk.Button(self.leftFrame, text="Delete", command=self.Delete).grid(column=0,row=2, padx=5, pady=5, sticky="ew")
+        #tk.Button(self.leftFrame, text="Refresh", command=self.Refresh).grid(column=0,row=2, padx=5, pady=5, sticky="ew")
 
         
         self.treeView = ttk.Treeview(self.root, columns=("Entry Field", "Overall Rating"))
@@ -33,13 +34,22 @@ class Page:
         self.conn = sqlite3.connect("Entry")
         self.cursor = self.conn.cursor()
         self.cursor.execute("SELECT * FROM Journal")
+        
         results = self.cursor.fetchall()
 
         for row in results:
             self.treeView.insert("", tk.END, text=row[1], values=(row[2], row[3]))
         
+        self.cursor.execute("SELECT COUNT (*) FROM Journal")
+        self.count = self.cursor.fetchone()
+        tk.Label(self.leftFrame, text=self.count).grid(columnspan=2, row=4, sticky="ew")
+
+
         self.root.mainloop()
     
+
+    
+
     def Delete(self):
         selectedItem = self.treeView.selection()
 
@@ -56,7 +66,6 @@ class Page:
 
 
     def NewEntry(self):
-        #self.root.destroy()
         self.new = tk.Tk()
         self.new.config(bg="lightblue")
         self.new.title("Entry's")
@@ -83,6 +92,7 @@ class Page:
         
 
         self.new.mainloop()
+
     
     def cancel(self):
         self.new.destroy()
