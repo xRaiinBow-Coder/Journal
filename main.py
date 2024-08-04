@@ -52,7 +52,7 @@ class Page:
         tk.Button(self.leftFrame, text="New Entry", bg="lightgrey",activebackground="black", activeforeground="white", command=self.NewEntry).grid(column=0,row=0, padx=5, pady=5, sticky="ew")
         tk.Button(self.leftFrame, text="View All", bg="lightgrey",activebackground="black", activeforeground="white", command=self.ViewAll).grid(column=0,row=1, padx=5, pady=5, sticky="ew")
         tk.Button(self.leftFrame, text="Delete", bg="lightgrey",activebackground="black", activeforeground="white", command=self.Delete).grid(column=0,row=2, padx=5, pady=5, sticky="ew")
-        tk.Button(self.leftFrame, text="expand",  bg="lightgrey",activebackground="black", activeforeground="white",command=self.Click).grid(column=0,row=3, padx=5, pady=5, sticky="ew")
+        tk.Button(self.leftFrame, text="expand",  bg="lightgrey",activebackground="black", activeforeground="white",command=self.Expand).grid(column=0,row=3, padx=5, pady=5, sticky="ew")
         tk.Button(self.leftFrame, text="Refresh",  bg="lightgrey",activebackground="black", activeforeground="white",command=self.Refresh).grid(column=0,row=4, padx=5, pady=5, sticky="ew")
 
         
@@ -63,7 +63,7 @@ class Page:
 
         self.root.mainloop()
     
-    def Click(self):
+    def Expand(self):
         selectedItem = self.treeView.selection()
 
 
