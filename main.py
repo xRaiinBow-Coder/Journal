@@ -193,8 +193,5 @@ class Page:
         self.view.destroy()
         self.MainView()
 
-
-
-
-    
+  
 Page().MainView()
